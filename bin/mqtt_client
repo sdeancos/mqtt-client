@@ -1,0 +1,91 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Usage:
+  mqtt_client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
+  mqtt_client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
+  mqtt_client (-h|--help)
+  mqtt_client (-v|--version)
+
+Commands:
+  publish                   Publish to topic from MQTT Broker.
+  subscribe                 Subscribe to topic from MQTT Broker.
+
+Options:
+  -h --help                 Show this screen.
+  -v --version              Show version.
+  --host=<host>             Broker Host. (Example: example.your_broker.com:1883)
+  --topic=<topic>           Topic.
+  --payload=<payload>       Payload to send.
+  -i --interactive          Interactive mode.
+  --username=<username>     Username.
+  --password=<password>     Password.
+  --transport=<transport>   TCP, TCP-TLS, WS, WS-TLS (Default: TCP)
+  --cert_path=<cert_path>   Path cert (Default: ./mqtt_broker_cert.pem)
+
+"""
+from docopt import docopt
+from terminaltables import SingleTable
+
+from mqtt_client import mqtt_client
+
+NAME, VERSION = 'MQTT Client', '1.0.2'
+
+
+if __name__ == '__main__':
+    arguments = docopt(f'{NAME} {VERSION}\n{__doc__}', version=f'{NAME} {VERSION}')
+
+    host, port = 'localhost', 1883
+    if arguments['--host']:
+        try:
+            host, port = arguments['--host'].split(':')
+        except Exception:
+            exit('│ERROR│ broker host failed. Example: example.your_broker.com:1883')
+        if port:
+            port = int(port)
+
+    transport = 'TCP'
+    if '--transport' in arguments and arguments['--transport']:
+        transport = arguments['--transport']
+
+    path = None
+    if '--cert_path' in arguments and arguments['--cert_path']:
+        path = arguments['--cert_path']
+
+    username = None
+    if '--username' in arguments and arguments['--username']:
+        username = arguments['--username']
+
+    password = None
+    if '--password' in arguments and arguments['--password']:
+        password = arguments['--password']
+
+    print(SingleTable([[NAME, VERSION]]).table)
+
+    try:
+        mqtt_handler = mqtt_client.connect_to_broker(
+            host=host,
+            port=port,
+            topic=arguments['--topic'],
+            username=username,
+            password=password,
+            transport=transport,
+            cert_path=path
+        )
+        mqtt_handler.connect()
+    except Exception as ex:
+        exit(f'│ERROR│ {ex}')
+
+    if arguments['publish']:
+        if not arguments['--interactive']:
+            mqtt_client.publish(mqtt_handler=mqtt_handler, topic=arguments['--topic'], payload=arguments['--payload'])
+        else:
+            while True:
+                try:
+                    payload = input('│publish to {}│ insert payload: '.format(arguments['--topic']))
+                    mqtt_client.publish(mqtt_handler=mqtt_handler, topic=arguments['--topic'], payload=payload)
+                except KeyboardInterrupt:
+                    exit('[CTRL+C] Exit by KeyboardInterrupt')
+
+    if arguments['subscribe']:
+        mqtt_client.subscribe(mqtt_handler=mqtt_handler)
