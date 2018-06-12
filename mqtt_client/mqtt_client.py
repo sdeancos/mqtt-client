@@ -63,6 +63,9 @@ class MqttWrapper:
         else:
             mqttc.subscribe(self.topic)
 
+    def loop_start(self):
+        self.client.loop_start()
+
     def loop_forever(self):
         try:
             self.client.loop_forever()
@@ -100,8 +103,9 @@ def connect_to_broker(host, port, topic, username, password, transport='tcp', ce
     return mqtt_handler
 
 
-def publish(mqtt_handler, topic, payload):
-    print(f'│publish to {topic}│ {payload}')
+def publish(mqtt_handler, payload):
+    table_data = [[f'publish to {mqtt_handler.topic}', payload]]
+    print(SingleTable(table_data).table)
 
     mqtt_handler.publish(payload=str(payload))
 
@@ -109,7 +113,6 @@ def publish(mqtt_handler, topic, payload):
 def subscribe(mqtt_handler, handler=default_subscribe_callback):
     mqtt_handler.on_message(func=handler)
 
-    print(f'│waiting from {handler}│ ...')
-
-    mqtt_handler.connect()
+    table_data = [[f'waiting from {handler}', '...']]
+    print(SingleTable(table_data).table)
     mqtt_handler.loop_forever()

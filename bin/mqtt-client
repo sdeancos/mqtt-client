@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 Usage:
-  mqtt_client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
-  mqtt_client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
-  mqtt_client (-h|--help)
-  mqtt_client (-v|--version)
+  mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
+  mqtt-client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
+  mqtt-client (-h|--help)
+  mqtt-client (-v|--version)
 
 Commands:
   publish                   Publish to topic from MQTT Broker.
@@ -29,7 +29,9 @@ from terminaltables import SingleTable
 
 from mqtt_client import mqtt_client
 
-NAME, VERSION = 'MQTT Client', '1.0.2'
+import readline
+
+NAME, VERSION = 'MQTT Client', '1.0.3'
 
 
 if __name__ == '__main__':
@@ -78,12 +80,13 @@ if __name__ == '__main__':
 
     if arguments['publish']:
         if not arguments['--interactive']:
-            mqtt_client.publish(mqtt_handler=mqtt_handler, topic=arguments['--topic'], payload=arguments['--payload'])
+            mqtt_client.publish(mqtt_handler=mqtt_handler, payload=arguments['--payload'])
         else:
+            mqtt_handler.loop_start()
             while True:
                 try:
-                    payload = input('│publish to {}│ insert payload: '.format(arguments['--topic']))
-                    mqtt_client.publish(mqtt_handler=mqtt_handler, topic=arguments['--topic'], payload=payload)
+                    payload = input('[insert payload] ? ')
+                    mqtt_client.publish(mqtt_handler=mqtt_handler, payload=payload)
                 except KeyboardInterrupt:
                     exit('[CTRL+C] Exit by KeyboardInterrupt')
 
