@@ -50,7 +50,7 @@ class MqttWrapper:
         # print(f'- SET TLS: {self.cert_path}')
 
     def connect(self):
-        if self.auth['username'] and self.auth['password']:
+        if 'username' in self.auth and 'password' in self.auth:
             self.client.username_pw_set(username=self.auth['username'], password=self.auth['password'])
         self.client.connect(self.host, self.port, self.timeout)
 
@@ -72,8 +72,13 @@ class MqttWrapper:
         except KeyboardInterrupt:
             exit('│CTRL+C│ Exit by KeyboardInterrupt')
 
-    def publish(self, payload):
-        self.client.publish(self.topic, payload=payload)
+    def publish(self, payload, qos=0, retain=False):
+        try:
+            message_info = self.client.publish(self.topic, payload=payload, qos=qos, retain=retain)
+            message_info.wait_for_publish()
+            return message_info.is_published()
+        except Exception as ex:
+            exit(ex)
 
 
 def connect_to_broker(host, port, topic, username, password, transport='tcp', cert_path=None):
@@ -103,11 +108,12 @@ def connect_to_broker(host, port, topic, username, password, transport='tcp', ce
     return mqtt_handler
 
 
-def publish(mqtt_handler, payload):
-    table_data = [[f'publish to {mqtt_handler.topic}', payload]]
+def publish(mqtt_handler, payload, qos=0, retain=False):
+    is_published = mqtt_handler.publish(payload=str(payload), qos=qos, retain=retain)
+    table_data = [[f'publish to {mqtt_handler.topic}', payload, 'Published: OK' if is_published else False]]
     print(SingleTable(table_data).table)
 
-    mqtt_handler.publish(payload=str(payload))
+    return is_published
 
 
 def subscribe(mqtt_handler, handler=default_subscribe_callback):

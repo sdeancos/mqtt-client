@@ -1,16 +1,16 @@
-# MQTT Client 1.0.3
+# MQTT Client 1.0.4
 
 Simple MQTT Client.
 
 
 ```shell
-MQTT Client 1.0.3
+MQTT Client 1.0.4
 
 Usage:
-  mqtt_client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
-  mqtt_client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
-  mqtt_client (-h|--help)
-  mqtt_client (-v|--version)
+  mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--qos=<qos>] [--retain=<retain>]
+  mqtt-client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
+  mqtt-client (-h|--help)
+  mqtt-client (-v|--version)
 
 Commands:
   publish                   Publish to topic from MQTT Broker.
@@ -27,4 +27,6 @@ Options:
   --password=<password>     Password.
   --transport=<transport>   TCP, TCP-TLS, WS, WS-TLS (Default: TCP)
   --cert_path=<cert_path>   Path cert (Default: ./mqtt_broker_cert.pem)
+  --qos=<qos>               Qos (Default: 0)
+  --retain=<retain>         Retain (Default: false)
 ```
