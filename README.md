@@ -1,10 +1,10 @@
-# MQTT Client 1.0.4
+# MQTT Client 1.1.0
 
 Simple MQTT Client.
 
 
 ```shell
-MQTT Client 1.0.4
+MQTT Client 1.1.0
 
 Usage:
   mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--qos=<qos>] [--retain=<retain>]

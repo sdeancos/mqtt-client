@@ -33,7 +33,7 @@ from mqtt_client import mqtt_client
 
 import readline
 
-NAME, VERSION = 'MQTT Client', '1.0.4'
+NAME, VERSION = 'MQTT Client', '1.1.0'
 
 
 if __name__ == '__main__':
