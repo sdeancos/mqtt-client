@@ -1,14 +1,12 @@
-# MQTT Client 1.1.0
+# MQTT Client 1.2.0
 
 Simple MQTT Client.
 
 
 ```shell
-MQTT Client 1.1.0
-
 Usage:
   mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--qos=<qos>] [--retain=<retain>]
-  mqtt-client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
+  mqtt-client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--callback=<callback>] [--command=<command>]
   mqtt-client (-h|--help)
   mqtt-client (-v|--version)
 
@@ -29,4 +27,6 @@ Options:
   --cert_path=<cert_path>   Path cert (Default: ./mqtt_broker_cert.pem)
   --qos=<qos>               Qos (Default: 0)
   --retain=<retain>         Retain (Default: false)
+  --callback=<callback>     Use a custom callback for subscriber. (default, raw, command)
+  --command=<command>       Command for callback type command.
 ```

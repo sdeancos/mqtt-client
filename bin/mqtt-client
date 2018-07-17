@@ -3,7 +3,7 @@
 """
 Usage:
   mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--qos=<qos>] [--retain=<retain>]
-  mqtt-client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>]
+  mqtt-client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--callback=<callback>] [--command=<command>]
   mqtt-client (-h|--help)
   mqtt-client (-v|--version)
 
@@ -24,6 +24,8 @@ Options:
   --cert_path=<cert_path>   Path cert (Default: ./mqtt_broker_cert.pem)
   --qos=<qos>               Qos (Default: 0)
   --retain=<retain>         Retain (Default: false)
+  --callback=<callback>     Use a custom callback for subscriber. (default, raw, command)
+  --command=<command>       Command for callback type command.
 
 """
 from docopt import docopt
@@ -33,7 +35,7 @@ from mqtt_client import mqtt_client
 
 import readline
 
-NAME, VERSION = 'MQTT Client', '1.1.0'
+NAME, VERSION = 'MQTT Client', '1.2.0'
 
 
 if __name__ == '__main__':
@@ -63,6 +65,14 @@ if __name__ == '__main__':
     password = None
     if '--password' in arguments and arguments['--password']:
         password = arguments['--password']
+
+    callback = None
+    if '--callback' in arguments and arguments['--callback']:
+        callback = arguments['--callback']
+
+    command = None
+    if '--command' in arguments and arguments['--command']:
+        command = arguments['--command']
 
     print(SingleTable([[NAME, VERSION]]).table)
 
@@ -103,4 +113,4 @@ if __name__ == '__main__':
                     exit('[CTRL+D] Exit')
 
     if arguments['subscribe']:
-        mqtt_client.subscribe(mqtt_handler=mqtt_handler)
+        mqtt_client.subscribe(mqtt_handler=mqtt_handler, callback=callback, command=command)

@@ -116,9 +116,18 @@ def publish(mqtt_handler, payload, qos=0, retain=False):
     return is_published
 
 
-def subscribe(mqtt_handler, handler=default_subscribe_callback):
-    mqtt_handler.on_message(func=handler)
+def subscribe(mqtt_handler, callback, command):
+    if not callback or callback == 'default':
+        callback = default_subscribe_callback
 
-    table_data = [[f'waiting from {handler}', '...']]
+    if callback == 'raw':
+        callback = subscribe_callback_raw
+
+    if callback == 'command' and command:
+        callback = subscribe_callback_command(command=command)
+
+    mqtt_handler.on_message(func=callback)
+
+    table_data = [[f'waiting from {callback}', '...']]
     print(SingleTable(table_data).table)
     mqtt_handler.loop_forever()
