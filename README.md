@@ -1,5 +1,11 @@
 # MQTT Client 1.2.0
 
+## Install
+
+> pip install mqtt-client
+
+## Usage
+
 Simple MQTT Client.
 
 
