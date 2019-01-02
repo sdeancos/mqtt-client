@@ -1,5 +1,7 @@
 # MQTT Client 1.2.0
 
+[![Downloads](https://pepy.tech/badge/mqtt-client)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/month)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/week)](https://pepy.tech/project/mqtt-client)
+
 ## Install
 
 > pip install mqtt-client
