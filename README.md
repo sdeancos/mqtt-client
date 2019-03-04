@@ -1,4 +1,4 @@
-# MQTT Client 1.2.0
+# MQTT Client 1.2.1
 
 Simple MQTT Client.
 

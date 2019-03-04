@@ -51,7 +51,8 @@ class MqttWrapper:
 
     def connect(self):
         if 'username' in self.auth and 'password' in self.auth:
-            self.client.username_pw_set(username=self.auth['username'], password=self.auth['password'])
+            if self.auth['username'] and self.auth['password']:
+                self.client.username_pw_set(username=self.auth['username'], password=self.auth['password'])
         self.client.connect(self.host, self.port, self.timeout)
 
     def on_message(self, func):
