@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Usage:
+  mqtt-client (publish | subscribe) --config=<config>
   mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--qos=<qos>] [--retain=<retain>]
   mqtt-client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--callback=<callback>] [--command=<command>]
   mqtt-client (-h|--help)
@@ -14,6 +15,7 @@ Commands:
 Options:
   -h --help                 Show this screen.
   -v --version              Show version.
+  --config=<config>         Config file.
   --host=<host>             Broker Host. (Example: example.your_broker.com:1883)
   --topic=<topic>           Topic.
   --payload=<payload>       Payload to send.
@@ -29,19 +31,42 @@ Options:
 
 """
 from docopt import docopt
+import readline
+import json
+
 from terminaltables import SingleTable
 
 from mqtt_client import mqtt_client
 
-import readline
 
-NAME, VERSION = 'MQTT Client', '1.2.0'
+NAME, VERSION = 'MQTT Client', '1.3.0'
+AUTHOR = 'Samuel de Ancos (2018-2019) <https://github.com/sdeancos/mqtt-client>'
 
 
 if __name__ == '__main__':
-    arguments = docopt(f'{NAME} {VERSION}\n{__doc__}', version=f'{NAME} {VERSION}')
+    arguments = docopt(f'{NAME} {VERSION}\n{AUTHOR}\n\n{__doc__}', version=f'{NAME} {VERSION}')
 
-    host, port = 'localhost', 1883
+    config = None
+    if arguments['--config']:
+        with open(arguments['--config']) as f:
+            _config_content = f.read()
+        config = json.loads(_config_content)
+        print(config)
+        host, port = config.get('host', 'localhost:1883').split(':')
+        port = int(port)
+        topic = config.get('topic')
+        transport = config.get('transport', 'TCP')
+        path = config.get('cert_path')
+        username, password = config.get('username'), config.get('password')
+        callback, command = config.get('callback'), config.get('command')
+    else:
+        host, port = 'localhost', 1883
+        topic = None
+        transport = 'TCP'
+        path = None
+        username, password = None, None
+        callback, command = None, None
+
     if arguments['--host']:
         try:
             host, port = arguments['--host'].split(':')
@@ -50,37 +75,34 @@ if __name__ == '__main__':
         if port:
             port = int(port)
 
-    transport = 'TCP'
     if '--transport' in arguments and arguments['--transport']:
         transport = arguments['--transport']
 
-    path = None
     if '--cert_path' in arguments and arguments['--cert_path']:
         path = arguments['--cert_path']
 
-    username = None
     if '--username' in arguments and arguments['--username']:
         username = arguments['--username']
 
-    password = None
     if '--password' in arguments and arguments['--password']:
         password = arguments['--password']
 
-    callback = None
     if '--callback' in arguments and arguments['--callback']:
         callback = arguments['--callback']
 
-    command = None
     if '--command' in arguments and arguments['--command']:
         command = arguments['--command']
 
     print(SingleTable([[NAME, VERSION]]).table)
 
+    if not topic:
+        topic = arguments['--topic']
+
     try:
         mqtt_handler = mqtt_client.connect_to_broker(
             host=host,
             port=port,
-            topic=arguments['--topic'],
+            topic=topic,
             username=username,
             password=password,
             transport=transport,
@@ -91,15 +113,29 @@ if __name__ == '__main__':
         exit(f'│ERROR│ {ex}')
 
     if arguments['publish']:
-        qos, retain = 0, False
-        if '--qos' in arguments and arguments['--qos']:
-            qos = int(arguments['--qos'])
-        if '--retain' in arguments and arguments['--retain']:
-            retain = bool(arguments['--retain'])
+        if config and 'qos' in config:
+            qos = config.get('qos', 0)
+        else:
+            qos = 0
+            if '--qos' in arguments and arguments['--qos']:
+                qos = int(arguments['--qos'])
 
-        if not arguments['--interactive']:
-            is_published = mqtt_client.publish(mqtt_handler=mqtt_handler, payload=arguments['--payload'],
-                                               qos=qos, retain=retain)
+        if config and 'retain' in config:
+            retain = bool(config.get('retain', False))
+        else:
+            retain = 0
+            if '--retain' in arguments and arguments['--retain']:
+                retain = bool(arguments['--retain'])
+
+        if (config and not 'interactive' in config) or not arguments['--interactive']:
+            if config and 'payload' in config:
+                payload = config['payload']
+            elif '--payload' in arguments:
+                payload = arguments['--payload']
+            else:
+                exit(f'│ERROR│ Not payload defined')
+
+            is_published = mqtt_client.publish(mqtt_handler=mqtt_handler, payload=payload, qos=qos, retain=retain)
         else:
             mqtt_handler.loop_start()
             while True:
