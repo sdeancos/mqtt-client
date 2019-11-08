@@ -4,7 +4,24 @@
 
 ## Install
 
-> pip install mqtt-client
+> pip install --upgrade mqtt-client
+
+## Examples
+
+```shell
+mqtt-client publish --config=my_config_file.json
+mqtt-client subscribe --config=my_config_file.json
+```
+
+```shell
+mqtt-client publish --host=mqttbroker.testing:1883 --topic=home/room/1/up --payload=ok
+mqtt-client publish --host=mqttbroker.testing:1883 --topic=home/room/1/up --interactive
+mqtt-client subscribe --host=mqttbroker.testing:1883 --topic=home/room/1/up
+```
+
+```shell
+mqtt-client subscribe --host=mqttbroker.testing:1883 --topic=home/room/1/up --callback=command --command=my_command
+```
 
 ## Usage
 
@@ -43,7 +60,7 @@ Options:
 
 ## Example file config
 
-> $ mqtt-client publish --config=example_config.json
+> mqtt-client publish --config=example_config.json
 
 ```json
 {
