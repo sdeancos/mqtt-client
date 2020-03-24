@@ -1,4 +1,4 @@
-# MQTT Client 1.3.0
+# MQTT Client 1.4.0
 
 [![Downloads](https://pepy.tech/badge/mqtt-client)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/month)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/week)](https://pepy.tech/project/mqtt-client)
 
@@ -30,8 +30,8 @@ Simple MQTT Client.
 ```shell
 Usage:
   mqtt-client (publish | subscribe) --config=<config>
-  mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--qos=<qos>] [--retain=<retain>]
-  mqtt-client subscribe --host=<host> --topic=<topic> [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--callback=<callback>] [--command=<command>]
+  mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--client_id=<client_id>] [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--qos=<qos>] [--retain=<retain>]
+  mqtt-client subscribe --host=<host> --topic=<topic> [--client_id=<client_id>] [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--callback=<callback>] [--command=<command>]
   mqtt-client (-h|--help)
   mqtt-client (-v|--version)
 
@@ -47,6 +47,7 @@ Options:
   --topic=<topic>           Topic.
   --payload=<payload>       Payload to send.
   -i --interactive          Interactive mode.
+  --client_id=<client_id>   Client ID.
   --username=<username>     Username.
   --password=<password>     Password.
   --transport=<transport>   TCP, TCP-TLS, WS, WS-TLS (Default: TCP)
@@ -66,8 +67,9 @@ Options:
 {
   "host": "mqttbroker:1883",
   "topic": "my_topic",
-  "payload": "Testing Simple MQTT Client 1.3.0",
+  "payload": "Testing Simple MQTT Client 1.4.0",
   "interactive": false,
+  "client_id": "Awesome MQTT Client"
   "username": "user",
   "password": "pass",
   "transport": "TCP",

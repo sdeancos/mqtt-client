@@ -82,12 +82,13 @@ class MqttWrapper:
             exit(ex)
 
 
-def connect_to_broker(host, port, topic, username, password, transport='tcp', cert_path=None):
+def connect_to_broker(host, port, topic, username, password, client_id=False, transport='tcp', cert_path=None):
     mqtt_handler = MqttWrapper(
         host=host,
         port=port,
         topic=topic,
         auth={'username': username, 'password': password},
+        client_id=client_id
         transport=transport
     )
 
