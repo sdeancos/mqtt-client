@@ -88,7 +88,7 @@ def connect_to_broker(host, port, topic, username, password, client_id=False, tr
         port=port,
         topic=topic,
         auth={'username': username, 'password': password},
-        client_id=client_id
+        client_id=client_id,
         transport=transport
     )
 
