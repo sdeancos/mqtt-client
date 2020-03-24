@@ -40,7 +40,7 @@ from terminaltables import SingleTable
 from mqtt_client import mqtt_client
 
 
-NAME, VERSION = 'MQTT Client', '1.4.0'
+NAME, VERSION = 'MQTT Client', '1.4.1'
 AUTHOR = 'Samuel de Ancos (2018-2020) <https://github.com/sdeancos/mqtt-client>'
 
 

@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='mqtt-client',
-    version='1.4.0',
+    version='1.4.1',
     description='Simple MQTT Client.',
     long_description=long_description,
     long_description_content_type="text/markdown",
