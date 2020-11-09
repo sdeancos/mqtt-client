@@ -39,12 +39,11 @@ from terminaltables import SingleTable
 
 from mqtt_client import mqtt_client
 
-
-NAME, VERSION = 'MQTT Client', '1.4.1'
+NAME, VERSION = 'MQTT Client', '1.5.0'
 AUTHOR = 'Samuel de Ancos (2018-2020) <https://github.com/sdeancos/mqtt-client>'
 
 
-if __name__ == '__main__':
+def main():
     arguments = docopt(f'{NAME} {VERSION}\n{AUTHOR}\n\n{__doc__}', version=f'{NAME} {VERSION}')
 
     config = None
@@ -76,7 +75,7 @@ if __name__ == '__main__':
             exit('│ERROR│ broker host failed. Example: example.your_broker.com:1883')
         if port:
             port = int(port)
-    
+
     if '--client_id' in arguments and arguments['--client_id']:
         client_id = arguments['--client_id']
 
@@ -132,7 +131,7 @@ if __name__ == '__main__':
             retain = 0
             if '--retain' in arguments and arguments['--retain']:
                 retain = bool(arguments['--retain'])
-        
+
         mqtt_handler.loop_start()
 
         if (config and not 'interactive' in config) or not arguments['--interactive']:
@@ -157,3 +156,6 @@ if __name__ == '__main__':
 
     if arguments['subscribe']:
         mqtt_client.subscribe(mqtt_handler=mqtt_handler, callback=callback, command=command)
+
+if __name__ == '__main__':
+    main()

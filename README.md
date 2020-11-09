@@ -1,4 +1,4 @@
-# MQTT Client 1.4.1
+# MQTT Client 1.5.0
 
 [![Downloads](https://pepy.tech/badge/mqtt-client)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/month)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/week)](https://pepy.tech/project/mqtt-client)
 
@@ -67,9 +67,9 @@ Options:
 {
   "host": "mqttbroker:1883",
   "topic": "my_topic",
-  "payload": "Testing Simple MQTT Client 1.4.0",
+  "payload": "Testing Simple MQTT Client 1.5.0",
   "interactive": false,
-  "client_id": "Awesome MQTT Client"
+  "client_id": "Awesome MQTT Client",
   "username": "user",
   "password": "pass",
   "transport": "TCP",

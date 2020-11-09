@@ -28,13 +28,13 @@ class MqttWrapper:
         self.client.on_connect = self.on_connect
 
     def _set_transport(self, transport):
-        if 'TCP' == transport:
+        if 'TCP' == transport or 'tcp' == transport:
             self.transport, self.tls = 'tcp', False
-        elif 'TCP-TLS' == transport:
+        elif 'TCP-TLS' == transport or 'tcp-tls' == transport:
             self.transport, self.tls = 'tcp', True
-        elif 'WS' == transport:
+        elif 'WS' == transport or 'ws' == transport:
             self.transport, self.tls = 'websocket', False
-        elif 'WS-TLS' == transport:
+        elif 'WS-TLS' == transport or 'ws-tls' == transport:
             self.transport, self.tls = 'websocket', True
 
     def set_tls(self, cert_path=None):
@@ -42,7 +42,7 @@ class MqttWrapper:
             self.cert_path = cert_path
         my_file = Path(self.cert_path)
         if not my_file.is_file():
-            exit('│ERROR│ Cert not found in: {}'.format(self.cert_path))
+            self.cert_path = None
 
         self.client.tls_set(self.cert_path, certfile=None, keyfile=None,
                             cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
