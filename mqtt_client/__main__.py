@@ -39,8 +39,8 @@ from terminaltables import SingleTable
 
 from mqtt_client import mqtt_client
 
-NAME, VERSION = 'MQTT Client', '1.5.0'
-AUTHOR = 'Samuel de Ancos (2018-2020) <https://github.com/sdeancos/mqtt-client>'
+NAME, VERSION = 'MQTT Client', '1.6.0'
+AUTHOR = 'Samuel de Ancos (2018-2022) <https://github.com/sdeancos/mqtt-client>'
 
 
 def main():
@@ -131,8 +131,6 @@ def main():
             retain = 0
             if '--retain' in arguments and arguments['--retain']:
                 retain = bool(arguments['--retain'])
-
-        mqtt_handler.loop_start()
 
         if (config and not 'interactive' in config) or not arguments['--interactive']:
             if config and 'payload' in config:

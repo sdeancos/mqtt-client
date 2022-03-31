@@ -7,14 +7,14 @@ with open("README.md", "r") as fh:
 
 setup(
     name='mqtt-client',
-    version='1.5.0',
+    version='1.6.0',
     description='Simple MQTT Client.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords='mqtt',
     author='Samuel de Ancos',
     author_email='sdeancos@gmail.com',
-    url='https://github.com/sdeancos/mqtt-client',
+    url='https://mqtt.clubpulp.com/',
     packages=find_packages(),
     include_package_data=False,
     python_requires='>=3.6',

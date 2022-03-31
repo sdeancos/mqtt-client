@@ -19,13 +19,16 @@ def subscribe_callback_command(command):
     command = [command]
 
     def _(mqttc, obj, msg):
+        command.append(msg.topic)
         command.append(msg.payload.decode('utf8'))
-        print(f'[COMMAND] {command}')
+        #print(f'[COMMAND] {command}')
 
         response = subprocess.run(command, stdout=subprocess.PIPE)
         if response.stdout:
             print(response.stdout)
         if response.stderr:
             print(response.stderr)
+        command.pop(1)
+        command.pop(1)
 
     return _

@@ -1,5 +1,8 @@
-import ssl
+import ssl, time
 from pathlib import Path
+
+import random
+import string
 
 import paho.mqtt.client as mqtt
 from terminaltables import SingleTable
@@ -16,7 +19,7 @@ TIMEOUT_DEFAULT = 5
 
 
 class MqttWrapper:
-    def __init__(self, host, port, topic, auth, client_id=None, transport='tcp'):
+    def __init__(self, host, port, topic, auth, client_id=False, transport='tcp'):
         self.host = host
         self.port = port
         self.auth = auth
@@ -24,7 +27,14 @@ class MqttWrapper:
         self.topic = topic
         self._set_transport(transport=transport)
         self.cert_path = CERT_DEFAULT_PATH
-        self.client = mqtt.Client(client_id, False if client_id else True, transport=self.transport)
+
+        clean_session = False
+        if client_id is False:
+          client_id = 'mqtt-client-' + ''.join(random.choice(string.ascii_lowercase) for i in range(6))
+          clean_session = True
+
+        self.client_id = client_id
+        self.client = mqtt.Client(self.client_id, clean_session, transport=self.transport)
         self.client.on_connect = self.on_connect
 
     def _set_transport(self, transport):
@@ -61,8 +71,6 @@ class MqttWrapper:
     def on_connect(self, mqttc, obj, flags, rc):
         if rc != 0:
             print('│ERROR│ from connect - rc: {}'.format(rc))
-        else:
-            mqttc.subscribe(self.topic)
 
     def loop_start(self):
         self.client.loop_start()
@@ -96,7 +104,8 @@ def connect_to_broker(host, port, topic, username, password, client_id=False, tr
         ['KEY', 'VALUE'],
         ['BROKER SETTINGS', f'{transport}://{host}:{port}'],
         ['CREDENTIALS USER/PASSWORD', f'{username if username else "-"} {password if password else "-"}'],
-        ['SUBSCRIBE TOPIC', f'{topic}']
+        ['CLIENT-ID', f'{mqtt_handler.client_id}'],
+        ['TOPIC', f'{topic}']
     ]
 
     print(SingleTable(table_data).table)
@@ -119,6 +128,8 @@ def publish(mqtt_handler, payload, qos=0, retain=False):
 
 
 def subscribe(mqtt_handler, callback, command):
+    mqtt_handler.client.subscribe(mqtt_handler.topic)
+
     if not callback or callback == 'default':
         callback = default_subscribe_callback
 

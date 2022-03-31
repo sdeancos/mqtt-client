@@ -1,4 +1,8 @@
-# MQTT Client 1.5.0
+# MQTT Client 
+
+ver: 1.6.0
+
+[Documentation](https://mqtt.clubpulp.com/)
 
 [![Downloads](https://pepy.tech/badge/mqtt-client)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/month)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/week)](https://pepy.tech/project/mqtt-client)
 
@@ -69,7 +73,7 @@ Options:
   "topic": "my_topic",
   "payload": "Testing Simple MQTT Client 1.5.0",
   "interactive": false,
-  "client_id": "Awesome MQTT Client",
+  "client_id": "awesome-mqtt-client",
   "username": "user",
   "password": "pass",
   "transport": "TCP",
