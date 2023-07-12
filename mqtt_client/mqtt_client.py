@@ -75,6 +75,9 @@ class MqttWrapper:
     def loop_start(self):
         self.client.loop_start()
 
+    def loop_stop(self):
+        self.client.loop_stop(force=False)
+
     def loop_forever(self):
         try:
             self.client.loop_forever()

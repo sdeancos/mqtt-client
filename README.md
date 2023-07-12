@@ -1,6 +1,6 @@
 # MQTT Client 
 
-ver: 1.6.0
+ver: 1.6.1
 
 [Documentation](https://mqtt.clubpulp.com/)
 
