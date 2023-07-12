@@ -39,8 +39,8 @@ from terminaltables import SingleTable
 
 from mqtt_client import mqtt_client
 
-NAME, VERSION = 'MQTT Client', '1.6.0'
-AUTHOR = 'Samuel de Ancos (2018-2022) <https://github.com/sdeancos/mqtt-client>'
+NAME, VERSION = 'MQTT Client', '1.6.1'
+AUTHOR = 'Samuel de Ancos (2018-2023) <https://github.com/sdeancos/mqtt-client>'
 
 
 def main():
@@ -142,15 +142,24 @@ def main():
 
             is_published = mqtt_client.publish(mqtt_handler=mqtt_handler, payload=payload, qos=qos, retain=retain)
         else:
+            mqtt_handler.loop_start()
+            exit_by = ''
             while True:
                 try:
                     payload = input('[insert payload] ? ')
                     is_published = mqtt_client.publish(mqtt_handler=mqtt_handler, payload=payload,
                                                        qos=qos, retain=retain)
                 except KeyboardInterrupt:
-                    exit('[CTRL+C] Exit')
+                    exit_by = '[CTRL+C] Exit'
+                    break
                 except EOFError:
-                    exit('[CTRL+D] Exit')
+                    exit_by = '[CTRL+D] Exit'
+                    break
+
+            mqtt_handler.loop_stop()
+
+            if exit_by is not '':
+                exit(exit_by)
 
     if arguments['subscribe']:
         mqtt_client.subscribe(mqtt_handler=mqtt_handler, callback=callback, command=command)
