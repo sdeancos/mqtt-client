@@ -1,10 +1,16 @@
-# MQTT Client 
+# MQTT Client
 
-ver: 1.6.1
+ver: 1.7.0
 
 [Documentation](https://mqtt.clubpulp.com/)
 
-[![Downloads](https://pepy.tech/badge/mqtt-client)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/month)](https://pepy.tech/project/mqtt-client) [![Downloads](https://pepy.tech/badge/mqtt-client/week)](https://pepy.tech/project/mqtt-client)
+[![Downloads](https://pepy.tech/badge/mqtt-client)](https://pepy.tech/project/mqtt-client)
+[![Downloads](https://pepy.tech/badge/mqtt-client/month)](https://pepy.tech/project/mqtt-client)
+[![Downloads](https://pepy.tech/badge/mqtt-client/week)](https://pepy.tech/project/mqtt-client)
+
+**mqtt-client** is a simple shell *MQTT client*.
+
+Some of its essential features are: callback system, interactive publishing mode, TCP and Websockets support and configuration via json file.
 
 ## Install
 
@@ -24,18 +30,16 @@ mqtt-client subscribe --host=mqttbroker.testing:1883 --topic=home/room/1/up
 ```
 
 ```shell
-mqtt-client subscribe --host=mqttbroker.testing:1883 --topic=home/room/1/up --callback=command --command=my_command
+mqtt-client subscribe --host=mqttbroker.testing:1883 --topic=home/room/1/up --callback=command --options=/home/scripts/myScript.bash
 ```
 
 ## Usage
-
-Simple MQTT Client.
 
 ```shell
 Usage:
   mqtt-client (publish | subscribe) --config=<config>
   mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--client_id=<client_id>] [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--qos=<qos>] [--retain=<retain>]
-  mqtt-client subscribe --host=<host> --topic=<topic> [--client_id=<client_id>] [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--callback=<callback>] [--command=<command>]
+  mqtt-client subscribe --host=<host> --topic=<topic> [--client_id=<client_id>] [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--callback=<callback>] [--options=<options>]
   mqtt-client (-h|--help)
   mqtt-client (-v|--version)
 
@@ -46,6 +50,7 @@ Commands:
 Options:
   -h --help                 Show this screen.
   -v --version              Show version.
+  --without_banner          Remove settings banner.
   --config=<config>         Config file.
   --host=<host>             Broker Host. (Example: example.your_broker.com:1883)
   --topic=<topic>           Topic.
@@ -58,9 +63,8 @@ Options:
   --cert_path=<cert_path>   Path cert (Default: ./mqtt_broker_cert.pem)
   --qos=<qos>               Qos (Default: 0)
   --retain=<retain>         Retain (Default: false)
-  --callback=<callback>     Use a custom callback for subscriber. (default, raw, command)
-  --command=<command>       Command for callback type command.
-
+  --callback=<callback>     Use a custom callback for subscriber. (default, raw, limited, command)
+  --options=<options>       Options for callback type command.
 ```
 
 ## Example file config
@@ -69,18 +73,18 @@ Options:
 
 ```json
 {
-  "host": "mqttbroker:1883",
-  "topic": "my_topic",
-  "payload": "Testing Simple MQTT Client 1.5.0",
-  "interactive": false,
-  "client_id": "awesome-mqtt-client",
-  "username": "user",
-  "password": "pass",
-  "transport": "TCP",
-  "cert_path": "",
-  "qos": 0,
-  "retain": false,
-  "callback": "",
-  "command": ""
+    "host": "mqttbroker:1883",
+    "topic": "my_topic",
+    "payload": "Testing Simple MQTT Client",
+    "interactive": false,
+    "client_id": "awesome-mqtt-client",
+    "username": "user",
+    "password": "pass",
+    "transport": "TCP",
+    "cert_path": "",
+    "qos": 0,
+    "retain": false,
+    "callback": "",
+    "options": ""
 }
 ```

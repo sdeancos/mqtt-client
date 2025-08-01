@@ -9,6 +9,7 @@ from terminaltables import SingleTable
 
 from mqtt_client.subscribe_callbacks import (
     default_subscribe_callback,
+    subscribe_callback_limited,
     subscribe_callback_raw,
     subscribe_callback_command,
 )
@@ -27,11 +28,11 @@ class MqttWrapper:
         self.topic = topic
         self._set_transport(transport=transport)
         self.cert_path = CERT_DEFAULT_PATH
-
+        
         clean_session = False
         if client_id is False:
-          client_id = 'mqtt-client-' + ''.join(random.choice(string.ascii_lowercase) for i in range(6))
-          clean_session = True
+            client_id = 'mqtt-client-' + ''.join(random.choice(string.ascii_lowercase) for i in range(6))
+            clean_session = True
 
         self.client_id = client_id
         self.client = mqtt.Client(self.client_id, clean_session, transport=self.transport)
@@ -56,8 +57,6 @@ class MqttWrapper:
 
         self.client.tls_set(self.cert_path, certfile=None, keyfile=None,
                             cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
-
-        # print(f'- SET TLS: {self.cert_path}')
 
     def connect(self):
         if 'username' in self.auth and 'password' in self.auth:
@@ -93,7 +92,7 @@ class MqttWrapper:
             exit(ex)
 
 
-def connect_to_broker(host, port, topic, username, password, client_id=False, transport='tcp', cert_path=None):
+def connect_to_broker(host, port, topic, username, password, with_banner=True, client_id=False, transport='tcp', cert_path=None):
     mqtt_handler = MqttWrapper(
         host=host,
         port=port,
@@ -103,15 +102,16 @@ def connect_to_broker(host, port, topic, username, password, client_id=False, tr
         transport=transport
     )
 
-    table_data = [
-        ['KEY', 'VALUE'],
-        ['BROKER SETTINGS', f'{transport}://{host}:{port}'],
-        ['CREDENTIALS USER/PASSWORD', f'{username if username else "-"} {password if password else "-"}'],
-        ['CLIENT-ID', f'{mqtt_handler.client_id}'],
-        ['TOPIC', f'{topic}']
-    ]
+    if with_banner:
+        table_data = [
+            ['KEY', 'VALUE'],
+            ['BROKER SETTINGS', f'{transport}://{host}:{port}'],
+            ['CREDENTIALS USER/PASSWORD', f'{username if username else "-"} {password if password else "-"}'],
+            ['CLIENT-ID', f'{mqtt_handler.client_id}'],
+            ['TOPIC', f'{topic}']
+        ]
 
-    print(SingleTable(table_data).table)
+        print(SingleTable(table_data).table)
 
     if mqtt_handler.tls:
         if cert_path:
@@ -130,20 +130,25 @@ def publish(mqtt_handler, payload, qos=0, retain=False):
     return is_published
 
 
-def subscribe(mqtt_handler, callback, command):
+def subscribe(mqtt_handler, callback, options, with_banner=True):
     mqtt_handler.client.subscribe(mqtt_handler.topic)
 
     if not callback or callback == 'default':
         callback = default_subscribe_callback
 
+    if callback == 'limited' and options:
+        callback = subscribe_callback_limited(limit=options)
+
     if callback == 'raw':
         callback = subscribe_callback_raw
 
-    if callback == 'command' and command:
-        callback = subscribe_callback_command(command=command)
+    if callback == 'command' and options:
+        callback = subscribe_callback_command(command=options)
 
     mqtt_handler.on_message(func=callback)
 
-    table_data = [[f'waiting from {callback}', '...']]
-    print(SingleTable(table_data).table)
+    if with_banner:
+        table_data = [[f'waiting from {callback}', '...']]
+        print(SingleTable(table_data).table)
+
     mqtt_handler.loop_forever()

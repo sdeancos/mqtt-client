@@ -4,7 +4,7 @@
 Usage:
   mqtt-client (publish | subscribe) --config=<config>
   mqtt-client publish --host=<host> --topic=<topic> (--payload=<payload> | --interactive) [--client_id=<client_id>] [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--qos=<qos>] [--retain=<retain>]
-  mqtt-client subscribe --host=<host> --topic=<topic> [--client_id=<client_id>] [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--callback=<callback>] [--command=<command>]
+  mqtt-client subscribe --host=<host> --topic=<topic> [--without_banner] [--client_id=<client_id>] [--username=<username>] [--password=<password>] [--transport=<transport>] [--cert_path=<cert_path>] [--callback=<callback>] [--options=<options>] 
   mqtt-client (-h|--help)
   mqtt-client (-v|--version)
 
@@ -15,6 +15,7 @@ Commands:
 Options:
   -h --help                 Show this screen.
   -v --version              Show version.
+  --without_banner          Remove settings banner.
   --config=<config>         Config file.
   --host=<host>             Broker Host. (Example: example.your_broker.com:1883)
   --topic=<topic>           Topic.
@@ -27,8 +28,8 @@ Options:
   --cert_path=<cert_path>   Path cert (Default: ./mqtt_broker_cert.pem)
   --qos=<qos>               Qos (Default: 0)
   --retain=<retain>         Retain (Default: false)
-  --callback=<callback>     Use a custom callback for subscriber. (default, raw, command)
-  --command=<command>       Command for callback type command.
+  --callback=<callback>     Use a custom callback for subscriber. (default, limited, raw, command)
+  --options=<options>       Options for callback
 
 """
 from docopt import docopt
@@ -39,8 +40,8 @@ from terminaltables import SingleTable
 
 from mqtt_client import mqtt_client
 
-NAME, VERSION = 'MQTT Client', '1.6.1'
-AUTHOR = 'Samuel de Ancos (2018-2023) <https://github.com/sdeancos/mqtt-client>'
+NAME, VERSION = 'MQTT Client', '1.7.0'
+AUTHOR = 'Samuel de Ancos (2018-2025) <https://github.com/sdeancos/mqtt-client>'
 
 
 def main():
@@ -51,6 +52,7 @@ def main():
         with open(arguments['--config']) as f:
             _config_content = f.read()
         config = json.loads(_config_content)
+        without_banner = config('without_banner', False)
         host, port = config.get('host', 'localhost:1883').split(':')
         port = int(port)
         topic = config.get('topic')
@@ -58,15 +60,19 @@ def main():
         transport = config.get('transport', 'TCP')
         path = config.get('cert_path')
         username, password = config.get('username'), config.get('password')
-        callback, command = config.get('callback'), config.get('command')
+        callback, options = config.get('callback'), config.get('optionss')
     else:
+        without_banner = False
         host, port = 'localhost', 1883
         topic = None
         client_id = False
         transport = 'TCP'
         path = None
         username, password = None, None
-        callback, command = None, None
+        callback, options = None, None
+
+    if '--without_banner' in arguments and arguments['--without_banner']:
+        without_banner = True
 
     if arguments['--host']:
         try:
@@ -94,10 +100,11 @@ def main():
     if '--callback' in arguments and arguments['--callback']:
         callback = arguments['--callback']
 
-    if '--command' in arguments and arguments['--command']:
-        command = arguments['--command']
+    if '--options' in arguments and arguments['--options']:
+        options = arguments['--options']
 
-    print(SingleTable([[NAME, VERSION]]).table)
+    if not without_banner:
+        print(SingleTable([[NAME, VERSION]]).table)
 
     if not topic:
         topic = arguments['--topic']
@@ -110,6 +117,7 @@ def main():
             client_id=client_id,
             username=username,
             password=password,
+            with_banner=not without_banner,
             transport=transport,
             cert_path=path
         )
@@ -140,14 +148,14 @@ def main():
             else:
                 exit(f'│ERROR│ Not payload defined')
 
-            is_published = mqtt_client.publish(mqtt_handler=mqtt_handler, payload=payload, qos=qos, retain=retain)
+            _is_published = mqtt_client.publish(mqtt_handler=mqtt_handler, payload=payload, qos=qos, retain=retain)
         else:
             mqtt_handler.loop_start()
             exit_by = ''
             while True:
                 try:
                     payload = input('[insert payload] ? ')
-                    is_published = mqtt_client.publish(mqtt_handler=mqtt_handler, payload=payload,
+                    _is_published = mqtt_client.publish(mqtt_handler=mqtt_handler, payload=payload,
                                                        qos=qos, retain=retain)
                 except KeyboardInterrupt:
                     exit_by = '[CTRL+C] Exit'
@@ -162,7 +170,8 @@ def main():
                 exit(exit_by)
 
     if arguments['subscribe']:
-        mqtt_client.subscribe(mqtt_handler=mqtt_handler, callback=callback, command=command)
+        mqtt_client.subscribe(mqtt_handler=mqtt_handler, callback=callback, options=options, with_banner=not without_banner)
+
 
 if __name__ == '__main__':
     main()
