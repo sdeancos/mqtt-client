@@ -35,7 +35,7 @@ class MqttWrapper:
             clean_session = True
 
         self.client_id = client_id
-        self.client = mqtt.Client(self.client_id, clean_session, transport=self.transport)
+        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, self.client_id, clean_session, transport=self.transport)
         self.client.on_connect = self.on_connect
 
     def _set_transport(self, transport):

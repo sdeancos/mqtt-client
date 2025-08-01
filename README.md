@@ -88,3 +88,13 @@ Options:
     "options": ""
 }
 ```
+
+## Example script callback (--callback=command --options=example_script.bash)
+
+```bash
+#!/bin/bash
+
+topic=$1
+message=$2
+echo "$topic -> $message"
+``
