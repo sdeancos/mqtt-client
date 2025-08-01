@@ -89,7 +89,11 @@ Options:
 }
 ```
 
-## Example script callback (--callback=command --options=example_script.bash)
+## Example script callback 
+
+### Bash example
+
+> mqtt-client subscribe --host=mqtt.local:1883 --topic=mytopic/# --callback=command --options=example_script.bash)
 
 ```bash
 #!/bin/bash
@@ -97,4 +101,20 @@ Options:
 topic=$1
 message=$2
 echo "$topic -> $message"
-``
+```
+
+### Python example
+
+> mqtt-client subscribe --host=mqtt.local:1883 --topic=mytopic/# --callback=command --options="/usr/bin/python example_script.py"
+
+```
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys
+
+topic, message = sys.argv[1], sys.argv[2]
+
+print(topic)
+print(message)
+```

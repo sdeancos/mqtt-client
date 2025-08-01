@@ -28,7 +28,8 @@ def subscribe_callback_raw(mqttc, obj, msg):
 
 
 def subscribe_callback_command(command):
-    command = [command]
+    command = command.split(' ')
+    n = len(command)
 
     def _(mqttc, obj, msg):
         command.append(msg.topic)
@@ -39,7 +40,7 @@ def subscribe_callback_command(command):
             print(response.stdout.decode('utf8'))
         if response.stderr:
             print(response.stderr.decode('utf8'))
-        command.pop(1)
-        command.pop(1)
+        command.pop(n)
+        command.pop(n)
 
     return _
