@@ -93,7 +93,7 @@ Options:
 
 ### Bash example
 
-> mqtt-client subscribe --host=mqtt.local:1883 --topic=mytopic/# --callback=command --options=example_script.bash)
+> mqtt-client subscribe --host=mqtt.local:1883 --topic=mytopic/# --callback=command --options=example_script.bash
 
 ```bash
 #!/bin/bash
